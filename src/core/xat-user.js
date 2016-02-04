@@ -55,17 +55,51 @@ class XatUser extends emitter {
     }
 
     send(packet) {
-        this.emit('send', packet);
         return new Promise((resolve, reject) => {
+            
             if (typeof packet === 'string') {
-                this._socket.write(packet + '\0', 'utf8', resolve);
+                this._parser.parseString(packet, (err, res) => {
+                    try {
+                        if (err) {
+                            this.emir('error', err);
+                        }
+                        let raw = new Buffer(packet + '\0', 'utf8');
+
+                        this.emit('send', { xml: res, str: packet, raw: raw });
+
+                        this._socket.write(raw, null, resolve);
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
             } else if (packet instanceof Buffer) {
-                this._socket.write(packet, '', resolve);
+                let str = packet.toString('utf8');
+                this._parser.parseString(str, (err, res) => {
+
+                    if (err) {
+                        this.emit('error', err);
+                    }
+
+                    this.emit('send', { xml: res, str: str, raw: packet });
+                    this._socket.write(packet, null, resolve);
+                });
             } else {
-                this._buildXML(packet).then(() => {
-                    this._socket.write(packet + '\0', 'utf8', resolve);
+                return this.emit('error', new Error('NotImplemented: xml send'));
+                this._builder.create(packet, {}, {}, { headless: true }).then((err, res) => {
+
+                    if (err) {
+                        this.emit('error', err);
+                    }
+
+                    let raw = new Buffer(res + '\0', 'utf8');
+                    this.emit('send', { xml: packet, str: res, raw: raw });
+
+                    this._socket.write(raw, null, resolve);
                 }).catch(reject);
             }
+        }).catch('error', (err) => {
+            this.emit('error', err);
+            throw err;
         });
     }
 
