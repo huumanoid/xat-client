@@ -356,7 +356,7 @@ class XatUser extends emitter {
             if (_arg7 != undefined){
                 _local9.attributes.w = _arg7;
             };
-            _local11 = XMLOrder(_local8, ["w", "p", "u", "t", "s", "d"]);
+            _local11 = xatlib.XMLOrder(_local8, ["w", "p", "u", "t", "s", "d"]);
             this.send(_local11);
         } else {
             if (_arg4 != 0){
@@ -431,6 +431,7 @@ class XatUser extends emitter {
 
     _myOnClose() {
         this.connected = false;
+        this.emit('close');
     }   
 
 }
