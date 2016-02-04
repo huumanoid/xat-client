@@ -2,6 +2,7 @@
 const emitter = require('events').EventEmitter;
 const defaults = require('./defaults.js');
 const xml2js = require('xml2js');
+const xatconst = require('./const.js');
 
 class XatUser extends emitter {
 
@@ -11,7 +12,7 @@ class XatUser extends emitter {
 
         super();
         this.todo = options.todo || {};
-        this.todo.MAX_PWR_INDEX = this.todo.MAX_PWR_INDEX || parseInt(414 / 32) + 1
+        this.todo.MAX_PWR_INDEX = xatconst.MAX_PWR_INDEX;
         this.global = options.global || {};
         this.gotDone = false;
         this._ipPicker = options.ippicker || defaults.ippicker;
