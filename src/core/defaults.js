@@ -7,7 +7,7 @@ const xatlib = require('./xatlib.js');
 
 module.exports = {
     xatlib: xatlib,
-    ipPicker: ippick.defaultPicker,
+    ippicker: ippick.defaultPicker,
     perlinNoise: perlinNoise,
     createSocket: createSocket
 };

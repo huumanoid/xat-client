@@ -10,21 +10,22 @@ class XatPicker {
     }
 
     pickIp(user) {
+        let self = this;
         return new Promise(function (resolve, reject) {
-            this.users[user.todo.w_userno] = this.users[user.todo.w_userno] 
+            self.users[user.todo.w_userno] = self.users[user.todo.w_userno] 
                 || { attempt: 0, prevpool: -1 };
-            if (!this.iprules) {
+            if (!self.iprules) {
                 http.get('http://xat.com/web_gear/chat/ip2.php', function (res) {
                     let body = '';
                     res.on('data', function (data) {
                         body += data;
                     }).on('end', function () {
-                        this.iprules = JSON.parse(body);
-                        resolve(this._pickIp(user));
+                        self.iprules = JSON.parse(body);
+                        resolve(self._pickIp(user));
                     })
                 });
             } else {
-                resolve(this._pickIp(user));
+                resolve(self._pickIp(user));
             }
         });
     }
@@ -105,6 +106,6 @@ class XatPicker {
     }
 }
 
-module.exports.XatPicker = XatPicker
-module.exports.defaultPicker = new XatPicker()
+module.exports.XatPicker = XatPicker;
+module.exports.defaultPicker = new XatPicker();
 
