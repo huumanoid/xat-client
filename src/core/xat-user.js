@@ -94,7 +94,7 @@ class XatUser extends emitter {
             let todo = this.todo;
             let global = this.global;
             let xatlib = this._xatlib;
-            let jt1 = this._join.jt1;
+            let jt1 = this._join.jt1 || 0;
             let jt2 = this._join.jt2;
             let sjt = this._join.sjt;
             let l5 = this._join.l5;
