@@ -9,7 +9,7 @@ function everyoneIsFriend(user, id, data) {
 module.exports.bind = function echo(user, opts) {
     opts = opts || {}
     opts.nofollow = opts.nofollow || false
-    opts.isFriend = opts.isFriend || noOneIsFriend
+    opts.isFriend = opts.isFriend || nooneIsFriend
     user.on('data', function (data) {
         var node = data.z || data.p
         if (node && node.attributes.t.substr(0, 2) == '/l') {
