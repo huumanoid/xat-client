@@ -34,7 +34,7 @@ class XatUser extends emitter {
 
             let buf = new Buffer(0);
 
-            socket.on('error', this._myOnError);
+            socket.on('error', err => this._myOnError(err));
 
             socket.on('data', data => {
                 buf = Buffer.concat([buf, data])
@@ -48,7 +48,7 @@ class XatUser extends emitter {
                 buf = buf.slice(lastZero + 1);
             });
 
-            socket.on('end', () => this._myOnClose);
+            socket.on('end', () => this._myOnClose());
         }).catch(e => {
             this.emit('error', e);
         });
