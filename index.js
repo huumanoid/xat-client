@@ -17,6 +17,7 @@ class ExtendableUser extends XatUser {
             options[key] = arguments[key];
         }
         require('./' + path.join('src/mixins/', name)).bind.apply(null, [this].concat(options.slice(1)));
+        return this;
     }
 }
 
