@@ -103,6 +103,12 @@ class XatUser extends emitter {
         });
     }
 
+    end() {
+        if (this._socket) {
+            this._socket.end();
+        }
+    }
+
     _myOnConnect() {
         this.connected = true;
         this.emit('connect');
