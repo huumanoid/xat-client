@@ -1,7 +1,7 @@
 
 function bind(user, options) {
     options = options || {};
-    options.perform_behavior = options.perform.behavior || false;
+    options.perform_behavior = options.perform_behavior || false;
 
     user.sendK2 = function userSendK2() {
         return user._NetworkSendMsg(1, '/K2', 0, 0, 1);
