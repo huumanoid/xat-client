@@ -1,4 +1,4 @@
-'use-strict';
+'use strict';
 
 /**
  * @param options
@@ -13,7 +13,9 @@ function periodic_reconnect(user, options) {
     setInterval(function () {
         if (!only_connected || user.isConnected) {
             user.end();
-            user.connect();
+            user.once('close', function () {
+                user.connect();
+            });
         }
     }, interval);
 }
