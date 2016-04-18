@@ -214,7 +214,9 @@ class XatUser extends emitter {
                     _local8++;
                 };
             };
-            _local5.attributes.u = ((todo.w_userrev)==undefined) ? 2 : todo.w_userno;
+            // I think it's OK to remove this strange behavior.
+            // _local5.attributes.u = ((todo.w_userrev)==undefined) ? 2 : todo.w_userno;
+            _local5.attributes.u = todo.w_userno;
             if (global.rf){
                 _local5.attributes.e = "1";
             };
