@@ -7,6 +7,7 @@
  *
  */
 function periodic_reconnect(user, options) {
+    options = options || {};
     let interval = options.interval || 1000 * 60 * 60 * 2; //2 hours
     let only_connected = options.only_connected || false;
 
