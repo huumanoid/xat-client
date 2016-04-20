@@ -19,7 +19,7 @@ class XatUser extends emitter {
         this._createSocket = options.createSocket || defaults.createSocket;
         this._join = {};
         this._socket = null;
-        this._connect = { appempt: 0 };
+        this._connect = { attempt: 0 };
         this._xatlib = options.xatlib || defaults.xatlib;
         this._perlinNoise = options.perlinNoise || defaults.perlinNoise;
         this._parser = new xml2js.Parser({ attrkey: 'attributes' });
