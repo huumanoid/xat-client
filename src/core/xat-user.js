@@ -67,7 +67,7 @@ class XatUser extends emitter {
 
                         this.emit('before-send', { xml: res, str: packet, raw: raw });
 
-                        this._socket.write(raw, null, function () {
+                        this._socket.write(raw, null, => {
                             this.emit('send', { xml: res, str: packet, raw: raw });
                             resolve();
                         });
@@ -84,7 +84,7 @@ class XatUser extends emitter {
                     }
 
                     this.emit('before-send', { xml: res, str: str, raw: packet });
-                    this._socket.write(packet, null, function () {
+                    this._socket.write(packet, null, => {
                         this.emit('send', { xml: res, str: str, raw: packet });
                         resolve();
                     });
