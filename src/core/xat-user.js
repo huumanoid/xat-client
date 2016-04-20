@@ -61,13 +61,16 @@ class XatUser extends emitter {
                 this._parser.parseString(packet, (err, res) => {
                     try {
                         if (err) {
-                            this.emir('error', err);
+                            res = null;
                         }
                         let raw = new Buffer(packet + '\0', 'utf8');
 
-                        this.emit('send', { xml: res, str: packet, raw: raw });
+                        this.emit('before-send', { xml: res, str: packet, raw: raw });
 
-                        this._socket.write(raw, null, resolve);
+                        this._socket.write(raw, null, function () {
+                            this.emit('send', { xml: res, str: packet, raw: raw });
+                            resolve();
+                        });
                     } catch (e) {
                         reject(e);
                     }
@@ -77,11 +80,14 @@ class XatUser extends emitter {
                 this._parser.parseString(str, (err, res) => {
 
                     if (err) {
-                        this.emit('error', err);
+                        res = null;
                     }
 
-                    this.emit('send', { xml: res, str: str, raw: packet });
-                    this._socket.write(packet, null, resolve);
+                    this.emit('before-send', { xml: res, str: str, raw: packet });
+                    this._socket.write(packet, null, function () {
+                        this.emit('send', { xml: res, str: str, raw: packet });
+                        resolve();
+                    });
                 });
             } else {
                 return this.emit('error', new Error('NotImplemented: xml send'));
@@ -292,6 +298,11 @@ class XatUser extends emitter {
             }
             if (result.y) {
                 let e = result.y;
+                if (e.C === "1") {
+                    //What should we do in this case?
+                    this.emit('captcha', result);
+                    return;
+                }
                 join.YI = xatlib.xInt(e.attributes.i);
                 join.jt2 = (getTimer() - join.sjt);
                 join.YC = xatlib.xInt(e.attributes.c);
