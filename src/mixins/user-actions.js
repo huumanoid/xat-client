@@ -47,7 +47,7 @@ function userActionsBind(user) {
         return user.send('<' + nodeName + ' />');
     }
     user.makeUser = function makeUser(userno, rank) {
-        user._NetworkSendMsg(user.todo.w_userno, "/" + rankToString(rank), 0, 0, userno);
+        return user._NetworkSendMsg(user.todo.w_userno, "/" + rankToString(rank), 0, 0, userno);
     }
     user.makeGuest = function makeUser(userno) {
         return user.makeUser(userno, UserRank.GUEST);
@@ -63,25 +63,29 @@ function userActionsBind(user) {
     }
 
     user.gagUser = function gagUser(args) {
-        user._NetworkSendMsg(user.todo.w_userno, "/gg" + args.duration, 0, 0, args.userno, args.reason, "");
+        return user._NetworkSendMsg(user.todo.w_userno, "/gg" + args.duration, 0, 0, args.userno, args.reason, "");
     }
 
     user.banUser = function banUser(args, puzzle) {
-        user._NetworkSendMsg(user.todo.w_userno, "/g" + args.duration, 0, 0, args.userno, args.reason, "", puzzle);
+        return user._NetworkSendMsg(user.todo.w_userno, "/g" + args.duration, 0, 0, args.userno, args.reason, "", puzzle);
     }
 
     user.muteUser = function muteUser(args) {
-        user._NetworkSendMsg(user.todo.w_userno, "/gm" + args.duration, 0, 0, args.userno, args.reason, "");
+        return user._NetworkSendMsg(user.todo.w_userno, "/gm" + args.duration, 0, 0, args.userno, args.reason, "");
     }
 
     user.unbanUser = function unbanUser(userno){
-        user._NetworkSendMsg(user.todo.w_userno, "/u", 0, 0, userno);
+        return user._NetworkSendMsg(user.todo.w_userno, "/u", 0, 0, userno);
     }
 
     user.kickUser = function kickUser(userno, reason) {
-        user._NetworkSendMsg(user.todo.w_userno, "/k", 0, 0, userno, reason);
+        return user._NetworkSendMsg(user.todo.w_userno, "/k", 0, 0, userno, reason);
     }
     user.sendKeepAlive = function keepAlive() {
-        user._NetworkSendMsg(user.todo.w_userno, "/KEEPALIVE", 0, 0, 1);
+        return user._NetworkSendMsg(user.todo.w_userno, "/KEEPALIVE", 0, 0, 1);
+    }
+
+    user.sendK2 = function sendK2() {
+        return user._NetworkSendMsg(1, "/K2", 0, 0, 1);
     }
 }
