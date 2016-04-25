@@ -81,4 +81,7 @@ function userActionsBind(user) {
     user.kickUser = function kickUser(userno, reason) {
         user._NetworkSendMsg(user.todo.w_userno, "/k", 0, 0, userno, reason);
     }
+    user.sendKeepAlive = function keepAlive() {
+        user._NetworkSendMsg(user.todo.w_userno, "/KEEPALIVE", 0, 0, 1);
+    }
 }
