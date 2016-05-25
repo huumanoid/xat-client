@@ -47,9 +47,10 @@ function classifyMessage(e) {
 
         e = clone(e);
 
-        for (var nodeName in e)
+        for (let nodeName in e) {
             e.nodeName = nodeName;
-            e.attributes = e[nodeName];
+            e.attributes = e[nodeName].attributes;
+        }
         
         if (e.nodeName === 'y'){
             if (e.attributes.C){
@@ -93,13 +94,14 @@ function classifyMessage(e) {
                                         };
                                         FirstTwo = e.attributes.t.substr(0, 2);
                                         IsSlash = (FirstTwo.substr(0, 1) === '/');
-                                        if ((((e.nodeName === 'p')) || ((e.nodeName === 'z')))){
+                                        if (!IsSlash && (((e.nodeName === 'p')) || ((e.nodeName === 'z')))){
                                             IsPrivateMessage = true;
                                             if (((IsPrivateMessage) && ((e.attributes.s & 2)))){
                                                 IsPrivateChat = true;
                                             };
                                             
-                                            return [{ type: 'private-message' }, 
+                                            return [{ type: 'text-message' },
+                                                    { type: 'private-message' }, 
                                                     { type: IsPrivateChat ? 'private-message-pc' : 'private-message-pm' },
                                                     { type: e.nodeName === 'p' ? 'private-message-local' : 'private-message-super' }
                                             ];
@@ -157,7 +159,7 @@ function classifyMessage(e) {
                                             };
                                             return { type: 'unknown' }
                                         };
-                                        return { type: 'main-chat-message' };
+                                        return [{ type: 'text-message' }, { type: 'main-chat-message' }];
                                     } else {
                                         if (e.nodeName === 'g'){
                                         } else {
