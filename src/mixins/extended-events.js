@@ -2,19 +2,20 @@
 
     
 function extendedEvents(user, options) {
+    options = options || {};
     let prefix = options.usePrefix === undefined || options.usePrefix ? 'ee-' : '';
     
   
     user.on('data', function (data) {
-    let types = classifyMessage(data);
-    if (!(types instanceof Array)) {
-        types = [types];
-    }
-    
-    for (let i = 0; i < types.length; ++i) {
-        let type = prefix + types[i].type;
-        user.emit(type, { type: type, xml: data, args: types[i].args });
-    }
+        let types = classifyMessage(data);
+        if (!(types instanceof Array)) {
+            types = [types];
+        }
+        
+        for (let i = 0; i < types.length; ++i) {
+            let type = prefix + types[i].type;
+            user.emit(type, { type: type, xml: data, args: types[i].args });
+        }
     });
 }
 
@@ -48,6 +49,7 @@ function classifyMessage(e) {
 
         for (var nodeName in e)
             e.nodeName = nodeName;
+            e.attributes = e[nodeName];
         
         if (e.nodeName === 'y'){
             if (e.attributes.C){
@@ -137,24 +139,25 @@ function classifyMessage(e) {
                                                 if (FirstTwo === '/k'){
                                                     return { type: 'kick' };
                                                 };
-                                                };
-                                                if (e.nodeName === 'z'){
+                                            };
+                                            if (e.nodeName === 'z'){
                                                 if (FirstTwo === '/l'){
                                                     return { type: 'locate-user' };
                                                 };
                                                 if (FirstTwo === '/a'){
                                                     return { type: 'at-user'};
                                                 };
-                                                };
-                                                if (FirstTwo === '/R'){//typing
-                                                    return { type: 'typing' };
-                                                };
-                                                if (FirstTwo === '/b'){//friend (learn more!)
-                                                };
-                                                if (FirstTwo === '/t'){//ttth
-                                                };
-                                                return { type: 'main-chat-message' };
+                                            };
+                                            if (FirstTwo === '/R'){//typing
+                                                return { type: 'typing' };
+                                            };
+                                            if (FirstTwo === '/b'){//friend (learn more!)
+                                            };
+                                            if (FirstTwo === '/t'){//ttth
+                                            };
+                                            return { type: 'unknown' }
                                         };
+                                        return { type: 'main-chat-message' };
                                     } else {
                                         if (e.nodeName === 'g'){
                                         } else {
