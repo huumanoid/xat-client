@@ -1,6 +1,13 @@
 'use strict';
 
-    
+/*
+Each event discribed by name, related data-object and arguments, parsed from it's content.
+For example, user-signout event has one argument: user's id.
+Arguments are parsed from related data-object.
+
+Options arguments:
+usePrefix - switch on/off adding prefix to event names to prevent naming conflicts (default: yes)
+*/
 function extendedEvents(user, options) {
     options = options || {};
     let prefix = options.usePrefix === undefined || options.usePrefix ? 'ee-' : '';
@@ -56,7 +63,7 @@ function classifyMessage(e) {
             if (e.attributes.C){
                 return { type: 'captcha' };
             };
-                return { type: 'auth-data' };
+            return { type: 'auth-data' };
         } else {
             if (e.nodeName === 'x'){
                 return { type: 'app' };
@@ -120,16 +127,44 @@ function classifyMessage(e) {
                                         };
                                         if (IsSlash){
                                             if (FirstTwo === '/d'){
-                                                return { type: 'delete' };
+                                                return { type: 'delete',
+                                                    args: {
+                                                        userId: e.attributes.u,
+                                                        deletedId: e.attributes.t.substr(2),
+                                                        timestamp: e.attributes.E,
+                                                        roomId: e.attributes.r } };
                                             };
                                             if (FirstTwo === '/s'){
-                                                return { type: 'scroller' };
+                                                return { type: 'scroller',
+                                                    args: {
+                                                        setterId: e.attributes.d,
+                                                        scrollerContent: e.attributes.t.substr(2) } };
                                             };
-                                            if ((((e.nodeName === 'c')) && ((FirstTwo === '/g')))){
-                                                return { type: 'gag' };
+                                            if ((((e.nodeName === 'c')) && ((FirstTwo === '/g')))){//first condition seems weird
+                                                let duration = '0';
+                                                let bannedUntil = '0';
+                                                if (e.nodeName === 'c') {
+                                                    bannedUntil = intParse(e.attributes.t.substr(2));
+                                                    duration = bannedUntil === 0 ? 0 : (bannedUntil - (new Date().getTime() / 1000 | 0));
+                                                } else {
+                                                    duration = intParse(e.attributes.t.substr(2));
+                                                    bannedUntil = (new Date().getTime() / 1000 | 0) + duration;
+                                                }
+
+                                                let args = {
+                                                    reason: e.attributes.p,
+                                                    banned: e.attributes.d,
+                                                    bannedBy: e.attributes.u,
+                                                    duration: duration,
+                                                    bannedUntil: bannedUntil,
+                                                };
+                                                return { type: 'gag', args };
                                             };
                                             if ((((e.nodeName === 'c')) && ((FirstTwo === '/u')))){
-                                                return { type: 'ungag' };
+                                                return { type: 'ungag', args: {
+                                                    unbanned: e.attributes.d,
+                                                    unbannedBy: e.attributes.u,
+                                                }};
                                             };
                                             if ((((e.nodeName === 'c')) || ((e.nodeName === 'p')))){
                                                 if (FirstTwo === '/m'){
@@ -139,12 +174,21 @@ function classifyMessage(e) {
                                                     IsUnMakeUser = true;//unmake user
                                                 };
                                                 if (FirstTwo === '/k'){
-                                                    return { type: 'kick' };
+                                                    return { type: 'kick',
+                                                        args: {
+                                                            reason: e.attributes.p,
+                                                            kickedBy: e.attributes.u,
+                                                            kicked: e.attributes.d,
+                                                        }};
                                                 };
                                             };
                                             if (e.nodeName === 'z'){
                                                 if (FirstTwo === '/l'){
-                                                    return { type: 'locate-user' };
+                                                    return { type: 'locate-user',
+                                                        args: {
+                                                            sender: e.attributes.u.split('_')[0],
+                                                            destination: e.attributes.d,
+                                                        } };
                                                 };
                                                 if (FirstTwo === '/a'){
                                                     return { type: 'at-user'};
@@ -159,20 +203,37 @@ function classifyMessage(e) {
                                             };
                                             return { type: 'unknown' }
                                         };
-                                        return [{ type: 'text-message' }, { type: 'main-chat-message' }];
+                                        let args = { 
+                                            message: e.attributes.t, 
+                                            sender: e.attributes.u.split('_')[0], 
+                                            timestamp: e.attributes.E,
+                                            roomId: e.attributes.r
+                                        }
+                                        return [{ type: 'text-message', args }, { type: 'main-chat-message', args }];
                                     } else {
                                         if (e.nodeName === 'g'){
                                         } else {
                                             if ((((e.nodeName === 'u')) || ((e.nodeName === 'o')))){
-                                              return [{ type: 'user' }, 
-                                                  { type: e.nodeName === 'u' ? 'user-signin': 'old-user' }                            
-                                              ];
+                                                let events = [{ type: 'user' }];
+
+                                                if (e.nodeName === 'o' || e.attributes.s === '2') {
+                                                    events.push({ type: 'old-user' });
+
+                                                    events.push(e.nodeName === 'o' ? { type: 'old-user-offline'} : { type: 'old-user-online' });
+                                                } else {
+                                                    events.push({ type: 'user-signin' });
+                                                }
+                                                return events;
                                             } else {
                                                 if (e.nodeName === 'l'){
-                                                    return { type: 'user-signout' };
+                                                    return { type: 'user-signout', args: { userId: e.attributes.u } };
                                                 } else {
                                                     if (e.nodeName === 'i'){
-                                                        return { type: 'chat-meta' };
+                                                        return { type: 'chat-meta', args: {
+                                                            background: e.attributes.b,
+                                                            botId: e.attributes.B,
+                                                            flags: e.attributes.f,
+                                                        }};
                                                     } else {
                                                         if (e.nodeName === 'w'){
                                                             return { type: 'pool-list' };
@@ -225,6 +286,7 @@ function classifyMessage(e) {
             };
         };
     };
+    return { type: 'unknown' }
 }
 
 
