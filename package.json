@@ -1,6 +1,6 @@
 {
     "name": "xat-client",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Node.js implementation of xat.com client.",
     "main": "./index.js",
     "repository": {
