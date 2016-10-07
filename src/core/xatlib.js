@@ -1,11 +1,12 @@
 'use strict';
 
-module.exports.CleanText = CleanText
-module.exports.searchreplace = searchreplace
-module.exports.xInt = xInt
-module.exports.XMLOrder = XMLOrder
-module.exports.WordIsLink = WordIsLink
+module.exports.CleanText = CleanText;
+module.exports.searchreplace = searchreplace;
+module.exports.xInt = xInt;
+module.exports.XMLOrder = XMLOrder;
+module.exports.WordIsLink = WordIsLink;
 module.exports.CleanTextNoXat = CleanText;
+module.exports.xatlinks = xatlinks;
 
 function CleanText(_arg1, _arg2){
             var _local4;
@@ -50,14 +51,14 @@ function CleanText(_arg1, _arg2){
         
     
 function xInt(num) {        
-    var num = parseInt(String(num))
+    var num = parseInt(String(num));
     if (isNaN(num)){
-        return 0
+        return 0;
     }
-    return num
+    return num;
 }
         
-module.exports.xatlinks = function xatlinks(_arg1) {
+function xatlinks(_arg1) {
             var _local2 = new Array(64);
             var _local3 = 0;
             while (_local3 < 26) {
