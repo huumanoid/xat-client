@@ -31,7 +31,6 @@ function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-
 function classifyMessage(e) {
     var IsPrivateMessage = false;
     var IsPrivateChat = false;
@@ -191,7 +190,15 @@ function classifyMessage(e) {
                                                         } };
                                                 };
                                                 if (FirstTwo === '/a'){
-                                                    return { type: 'at-user'};
+                                                    let loc = e.attributes.t.substr(2);
+                                                    return { type: 'at-user',
+                                                        args: {
+                                                            timestamp: e.attributes.E,
+                                                            destination: e.attributes.d,
+                                                            sender: e.attributes.u.split('_')[0],
+                                                            nofollow: loc === '_NF',
+                                                            location: loc[0] === '_' ? null : loc.substr(1),
+                                                        }};
                                                 };
                                             };
                                             if (FirstTwo === '/R'){//typing
@@ -216,10 +223,10 @@ function classifyMessage(e) {
                                             if ((((e.nodeName === 'u')) || ((e.nodeName === 'o')))){
                                                 let events = [{ type: 'user' }];
 
-                                                if (e.nodeName === 'o' || e.attributes.s === '2') {
+                                                if (e.attributes.s & 1) {
                                                     events.push({ type: 'old-user' });
 
-                                                    events.push(e.nodeName === 'o' ? { type: 'old-user-offline'} : { type: 'old-user-online' });
+                                                    events.push(e.nodeName === 'o' ? { type: 'old-user-offline' } : { type: 'old-user-online' });
                                                 } else {
                                                     events.push({ type: 'user-signin' });
                                                 }
