@@ -1,4 +1,5 @@
-var xInt = require('../core/xatlib.js').xInt
+'use strict';
+var xInt = require('../core/xatlib.js').xInt;
 
 module.exports.bind = function chatData(user, opts) {
     opts = opts || {}
@@ -8,28 +9,34 @@ module.exports.bind = function chatData(user, opts) {
     
     var max_i = 0
     function FindUser(u) {
-        var users = user.chatbox.users
-        for (var i = 0; i < users.length; ++i) {
+        let users = user.chatbox.users;
+        for (let i = 0; i < users.length; ++i) {
             if (users[i].u === u) {
-                return i
+                return i;
             }
         }
-        return -1
+        return -1;
     }
     
-    user.chatbox = { users: [], messages: [], findUser: function (u) { 
-            var index = FindUser(u)
+    user.chatbox = { 
+        users: [],
+        messages: [],
+        findUser: function (u) {
+            let index = FindUser(u)
             return index >= 0 ? user.chatbox.users[index] : null
-        }, findMessage: function (i) {
-            var messages = user.chatbox.messages
-            for (var cc = 0; cc < messages.length; ++cc) {
+        },
+        findMessage: function (i) {
+            let messages = user.chatbox.messages;
+            for (let cc = 0; cc < messages.length; ++cc) {
                 if (messages[cc].i == i) {
-                    return messages[cc]
+                    return messages[cc];
                 }
             }
-            return null
+            return null;
         },
-        settings: { }
+        settings: { },
+        pools: [],
+        defaultPool: null
     }
     
     
@@ -37,6 +44,9 @@ module.exports.bind = function chatData(user, opts) {
         var todo = user.todo
         var Users = user.chatbox.users
         var Message = user.chatbox.messages
+
+        var UserIndex;
+        var n;
         
         if (data.i) {
             var b = data.i.attributes.b && data.i.attributes.b.split(';=')
@@ -51,7 +61,13 @@ module.exports.bind = function chatData(user, opts) {
                     && Boolean(data.i.attributes.f & 128),
             }
         }
-        
+
+        if (data.w) {
+            let v = data.w.attributes.v.split(' ');
+            user.chatbox.pools = v.slice(1);
+            user.chatbox.defaultPool = v[0];
+        }
+
         if (data.o || data.u) {
             var e = data.o || data.u
             var u = e.attributes.u

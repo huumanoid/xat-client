@@ -85,6 +85,10 @@ function userActionsBind(user) {
         return user._NetworkSendMsg(user.todo.w_userno, "/KEEPALIVE", 0, 0, 1);
     }
 
+    user.setPool = function setPool(pool) {
+        return user.send('<w' + pool + ' />');
+    }
+
     user.sendK2 = function sendK2() {
         return user._NetworkSendMsg(1, "/K2", 0, 0, 1);
     }
