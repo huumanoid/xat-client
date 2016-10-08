@@ -298,7 +298,7 @@ class XatUser extends emitter {
             }
             if (result.y) {
                 let e = result.y;
-                if (e.C === "1") {
+                if (e.attributes.C === "1") {
                     //What should we do in this case?
                     this.emit('captcha', result);
                     return;
