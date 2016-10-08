@@ -23,6 +23,8 @@ class XatUser extends emitter {
         this._xatlib = options.xatlib || defaults.xatlib;
         this._perlinNoise = options.perlinNoise || defaults.perlinNoise;
         this._parser = new xml2js.Parser({ attrkey: 'attributes' });
+        this._OnUserList = null;
+        this._CountLinks = null;
     }
 
     connect() {
@@ -335,6 +337,18 @@ class XatUser extends emitter {
     _NetworkSendMsg(_arg1, _arg2, _arg3, _arg4, _arg5, _arg6, _arg7) {
         let todo = this.todo;
         let xatlib = this._xatlib;
+        let self = this;
+        function OnUserList() {
+            if (typeof self._OnUserList === 'function')
+                return self._OnUserList.call(this, arguments);
+            return false;
+        }
+        function CountLinks() {
+            if (typeof self._OnCountLinks === 'function') {
+                return self._CountLinks.call(this, arguments);
+            }
+            return 0;
+        }
 
         var _local9;
         if (todo.lb == "n"){
@@ -352,14 +366,6 @@ class XatUser extends emitter {
         var _local8 = {};
         var _local10 = true;
         var _local11 = "";
-        var as_local = _arg2.indexOf('/local') === 0;
-        if (as_local) {
-            _arg2 = _arg2.substr('/local'.length); 
-        }
-        var as_link = _arg2.indexOf('/link') === 0;
-        if (as_link) {
-            as_link = _arg2.substr('/link'.length);
-        }
 
         if (_arg5 != 0){
             _local9 = _local8.c = { attributes: { } }
@@ -379,7 +385,7 @@ class XatUser extends emitter {
             this.send(_local11);
         } else {
             if (_arg4 != 0){
-                if (((((((as_local /*&& OnUserList(_arg4)*/) && (!((_arg2.substr(0, 2) == "/a"))))) && (!((_arg2.substr(0, 2) == "/l"))))) && (!((_arg2.substr(0, 2) == "/t"))))){
+                if (((((((OnUserList(_arg4)) && (!((_arg2.substr(0, 2) == "/a"))))) && (!((_arg2.substr(0, 2) == "/l"))))) && (!((_arg2.substr(0, 2) == "/t"))))){
                     _local9 = _local8.p = { attributes: { }};
                     if (_arg3 != 0){
                         _local9.attributes.d = todo.w_userno;
@@ -403,7 +409,7 @@ class XatUser extends emitter {
                 };
             } else {
                 if (_arg3 != 0){
-                    if (as_local /*&& OnUserList(_arg3)*/){
+                    if (OnUserList(_arg3)){
                         _local9 = _local8.p = { attributes: { }}
                         _local9.attributes.d = todo.w_userno;
                         _local9.attributes.s = 2;
@@ -425,7 +431,7 @@ class XatUser extends emitter {
                     _local9 = _local8.m = { attributes: { }}
                     _local9.attributes.u = ((todo.w_userrev)<=0) ? _arg1 : ((_arg1 + "_") + todo.w_userrev);
                     _local9.attributes.t = _arg2;
-                    if (as_link || false && CountLinks(_arg2) > 0){
+                    if (CountLinks(_arg2) > 0){
                         _local9.attributes.l = 1;
                     };
                     _local11 = xatlib.XMLOrder(_local8, ["t", "u", "l"]);
