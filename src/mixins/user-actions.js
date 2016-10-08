@@ -18,33 +18,58 @@ function rankToString(rank) {
 module.exports.bind = userActionsBind;
 
 function userActionsBind(user) {
-    user.sendTextMessage = function sendTextMessage(message, isAsLink) {
-        if (isAsLink) {
-            message = '/link' + message;
-        }
-        return user._NetworkSendMsg(user.todo.w_userno, message, 0);
+    user.sendTextMessage = function sendTextMessage(message, options) {
+        options = options || {};
+        const asLink = options.asLink || false;
+
+        const hooks = user._NetworkSendMsgHooks;
+        const countlinks = hooks.CountLinks;
+        hooks.CountLinks = asLink ? _ => 1 : _ => 0;
+
+        const ret = user._NetworkSendMsg(user.todo.w_userno, message, 0);
+
+        hooks.CountLinks = countlinks;
+        return ret;
     }
-    user.sendPCMessage = function sendPCMessage(message, receiver, isAsLocal) {
-        if (isAsLocal)
-            message = "/local" + message;
-        return user._NetworkSendMsg(user.todo.w_userno, message, receiver);
+    user.sendPCMessage = function sendPCMessage(message, receiver, options) {
+        options = options || {};
+        const asLocal = options.asLocal || false;
+
+        const hooks = user._NetworkSendMsgHooks;
+        const onuserlist = hooks.OnUserList;
+        hooks.OnUserList = asLocal ? _ => true : _ => false;
+        const ret = user._NetworkSendMsg(user.todo.w_userno, message, receiver);
+        hooks.OnUserList = onuserlist;
+        return ret;
     }
-    user.sendPMMessage = function sendPMMessage(message, receiver, isAsLocal) {
-        if (isAsLocal)
-            message = "/local" + message;
-        return user._NetworkSendMsg(user.todo.w_userno, message, 0, receiver);
+    user.sendPMMessage = function sendPMMessage(message, receiver, options) {
+        options = options || {};
+        const asLocal = options.asLocal || false;
+
+        const hooks = user._NetworkSendMsgHooks;
+        const onuserlist = hooks.OnUserList;
+        hooks.OnUserList = asLocal ? _ => true : _ => false;
+        const ret = user._NetworkSendMsg(user.todo.w_userno, message, 0, receiver);
+        hooks.OnUserList = onuserlist;
+        return ret;
     }
     user.sendLocate = function sendLocate(locating) {
         return user._NetworkSendMsg(user.todo.w_userno, "/l", 0, locating, 0);
     }
-    user.sendResponseToLocate = function sendResponseToLocate(responseTo, asToFriend, noFollow) {
-        return user._NetworkSendMsg(user.todo.w_userno, "/a" + (asToFriend ? "" : (noFollow ? "_NF": "_")), 0, responseTo);
+    user.sendResponseToLocate = function sendResponseToLocate(responseTo, options) {
+        options = options || {};
+        let isFriend = options.isFriend || false;
+        let nofollow = options.nofollow || false;
+        let resp = '/a';
+        if (nofollow) {
+            resp += '_NF';
+        } else if (!isFriend) {
+            resp += '_';
+        }
+        return user._NetworkSendMsg(user.todo.w_userno, resp, 0, responseTo);
     }
     user.sendGetFriendStatus = function sendGetFriendStatus(friends) {
-        var nodeName = 'f';
-        for (var i = 0; i < friends.Length; i++)
-            nodeName += ' ' + friends[i].ToString();
-        return user.send('<' + nodeName + ' />');
+        return user.send(`<f ${friends.join(' ')} />`);
     }
     user.makeUser = function makeUser(userno, rank) {
         return user._NetworkSendMsg(user.todo.w_userno, "/" + rankToString(rank), 0, 0, userno);
@@ -66,8 +91,8 @@ function userActionsBind(user) {
         return user._NetworkSendMsg(user.todo.w_userno, "/gg" + args.duration, 0, 0, args.userno, args.reason, "");
     }
 
-    user.banUser = function banUser(args, puzzle) {
-        return user._NetworkSendMsg(user.todo.w_userno, "/g" + args.duration, 0, 0, args.userno, args.reason, "", puzzle);
+    user.banUser = function banUser(args) {
+        return user._NetworkSendMsg(user.todo.w_userno, "/g" + args.duration, 0, 0, args.userno, args.reason, "", args.puzzle);
     }
 
     user.muteUser = function muteUser(args) {
