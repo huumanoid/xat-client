@@ -23,8 +23,7 @@ class XatUser extends emitter {
         this._xatlib = options.xatlib || defaults.xatlib;
         this._perlinNoise = options.perlinNoise || defaults.perlinNoise;
         this._parser = new xml2js.Parser({ attrkey: 'attributes' });
-        this._OnUserList = null;
-        this._CountLinks = null;
+        this._NetworkSendMsgHooks = {};
     }
 
     connect() {
@@ -335,17 +334,19 @@ class XatUser extends emitter {
     }
  
     _NetworkSendMsg(_arg1, _arg2, _arg3, _arg4, _arg5, _arg6, _arg7) {
-        let todo = this.todo;
-        let xatlib = this._xatlib;
-        let self = this;
+        const todo = this.todo;
+        const xatlib = this._xatlib;
+        const hooks = this._NetworkSendMsgHooks;
+        const _OnUserList = hooks.OnUserList;
+        const _CountLinks = hooks.CountLinks;
         function OnUserList() {
-            if (typeof self._OnUserList === 'function')
-                return self._OnUserList.call(this, arguments);
+            if (typeof _OnUserList === 'function')
+                return _OnUserList.call(this, arguments);
             return false;
         }
         function CountLinks() {
-            if (typeof self._CountLinks === 'function') {
-                return self._CountLinks.call(this, arguments);
+            if (typeof _CountLinks === 'function') {
+                return _CountLinks.call(this, arguments);
             }
             return 0;
         }
