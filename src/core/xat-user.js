@@ -12,7 +12,7 @@ class XatUser extends emitter {
 
         super();
         this.todo = options.todo || {};
-        this.todo.MAX_PWR_INDEX = xatconst.MAX_PWR_INDEX;
+        this.todo.MAX_PWR_INDEX = this.todo.MAX_PWR_INDEX || xatconst.MAX_PWR_INDEX;
         this.global = options.global || {};
         this.gotDone = false;
         this._ipPicker = options.ippicker || defaults.ippicker;
@@ -344,7 +344,7 @@ class XatUser extends emitter {
             return false;
         }
         function CountLinks() {
-            if (typeof self._OnCountLinks === 'function') {
+            if (typeof self._CountLinks === 'function') {
                 return self._CountLinks.call(this, arguments);
             }
             return 0;
