@@ -19,6 +19,11 @@ module.exports.bind = userActionsBind;
 
 function userActionsBind(user) {
     user.sendTextMessage = function sendTextMessage(message, options) {
+        // compatibility
+        if (typeof options === 'boolean') {
+            options = { asLink: options };
+        }
+
         options = options || {};
         const asLink = options.asLink || false;
 
@@ -32,6 +37,11 @@ function userActionsBind(user) {
         return ret;
     }
     user.sendPCMessage = function sendPCMessage(message, receiver, options) {
+        // compatibility
+        if (typeof options === 'boolean') {
+            options = { asLocal: options };
+        }
+
         options = options || {};
         const asLocal = options.asLocal || false;
 
@@ -43,6 +53,11 @@ function userActionsBind(user) {
         return ret;
     }
     user.sendPMMessage = function sendPMMessage(message, receiver, options) {
+        // compatibility
+        if (typeof options === 'boolean') {
+            options = { asLocal: options };
+        }
+
         options = options || {};
         const asLocal = options.asLocal || false;
 
@@ -57,6 +72,11 @@ function userActionsBind(user) {
         return user._NetworkSendMsg(user.todo.w_userno, "/l", 0, locating, 0);
     }
     user.sendResponseToLocate = function sendResponseToLocate(responseTo, options) {
+        // compatibility
+        if (typeof options === 'boolean') {
+            options = { isFriend: options, nofollow: arguments[2] };
+        }
+
         options = options || {};
         let isFriend = options.isFriend || false;
         let nofollow = options.nofollow || false;
