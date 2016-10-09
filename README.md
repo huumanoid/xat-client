@@ -46,6 +46,7 @@ When user connects to chat:
 * Server sends current state of chat: settings, last 20 messages, last active users.
 
 So, core implements first, second and fourth steps.
+
 ### Custom network transport
 By default, xat-client uses tcp-socket, provided by node's net.connect. You can use your own, in case to use TOR/http proxy/something else.
 
@@ -53,16 +54,18 @@ By default, xat-client uses tcp-socket, provided by node's net.connect. You can 
 A long time ago, servers ip addresses was hardcoded in xat's client. Now, it download ips (or even domain naimes) from [external address](http://xat.com/web_gear/chat/ip2.php) (information is actual at 16 March 2016).
 Actual scheme implemented in file src/core/ippick.js. You can use your own scheme (for example, if xat change ip picking scheme or if you would like to use xat-client for ixat server.
 
-### Forming 'j2'-packet.
-Original xat's client preprocesses content of chat.sol and form a response.
-Format of 'j2'-packet is not strict, but sensitive in some cases (especially when we form j2-packet for registered/subscriber user).
+### Forming `<j2>` packet.
+`<j2>` packet contains all user's authenication data. Client should send `<j2>` in order to pass authentication on server.
+Original xat's client preprocesses content of chat.sol and form `<j2>`.
+Format of `<j2>` packet is not strict, but sensitive in some cases (especially when we form `<j2>` packet for registered/subscriber user). [See more.](#xat-user-options)
 
-The most interesing part of this process is that you need to compute 'l5' attribute using pixel's rgb value, get from specially generated image overlapped by perlin noise. Seeds for perlin noise and image settings goes from 'p' attribute of server's 'y'-packet. This is how it's implement in original swp client. However, range of possible parameters, actually used by server, is quite small. So, the solution is to precalculate all required values of 'l5' and store it, for example, in file.
+The most interesing part of this process is that you need to compute 'l5' attribute using pixel's rgb value, get from specially generated image overlapped by perlin noise. Seeds for perlin noise and image settings goes from 'p' attribute of server's `<y>` packet. This is how it's implement in original swf client. However, range of possible parameters, actually used by server, is quite small. So, the solution is to precalculate all required values of 'l5' and store it, for example, in file.
+*Note: idea of implemented solution not belongs to me. Unfortunately, i don't remember, who gave me files with precalculated l5 values, but, anyway, thank you!*
 
 The process described above is customizable.
 
 ## Core API
-### xat-user options
+### xat-user options<a name="xat-user-options"/>
 `todo` and `global` objects are similar to swf client's ones. This section contains as much options as possible, even if they are not implemented in xat-client or event should be ignored.
 * `todo`: complex object, describing user. All values below have `String` type.
   * `w_userno`: id
@@ -145,18 +148,68 @@ require('/path/to/my/custom/mixin.js').bind(client);
 ```
 
 ### user-actions
-### lurker-timeout
+Adds several methods for interaction with chat.
+#### Methods.
+* `sendTextMessage`: sends message to main chat.
+  * `message`
+  * `options`:
+    * `asLink`: when user sends link via swl client, client adds 'l' attribute to <m>, which prevents message from storing. This options adds 'l' attribute as well. Default: false.
+* `sendPMMessage`: sends private message to user. 
+  * `options`
+    * `message`
+    * `receiver`
+    * `asLocal`: sends `<p>` message instead of `<z>`. `<p>` message reach it's destination only if sender and receiver are in same chat. Probably, it's easier for server to route `<p>` packet rather than `z`, but in case sender and receiver are in same chat, both packages routes in the same way. Default: false.
+* `sendPCMessage`:
+  * `options`: same as for sendPMMessage
+* `sendLocate`: sends locate (/l) request to user.
+  * `userno`: destination.
+* `sendResponseToLocate`: sends at (/a) message, that usually responds to locate. 
+  * `userno`: destination.
+  * `options`: note! nofollow option is stronger that isFriend. It means, if you set nofollow to true, no matter what is isFriend.
+    * `isFriend`: should response reveal client's location to requester.
+    * `nofollow`: should response state that client has activated (nofollow) power. Works even without power.
+* `sendGetFriendStatus`: sends list of friends whose status (online/offline) we want to know.
+  * `friends`: list of friend's ids.
+* `makeUser`:
+* `makeGuest`: makes user specified by id a guest. 
+  * `userno`: id
+* `makeMember`:
+  * `userno`
+* `makeModerator`:
+* `makeOwner`:
+* `gagUser`:
+* `banUser`: ban user.
+  * `options`:
+    * `userno`: id of user.
+    * `duration`: duration of ban in **seconds**. 0 for forever ban.
+    * `reason`
+    * `puzzle`: id of ban game. Default: no puzzle.
+* `muteUser`:
+* `unbanUser`: unban user.
+  * `userno`
+* `kickUser`: kicks user.
+  * `userno`
+  * `reason`
+* `sendKeepAlive`: sends /KEEPALIVE message. [Learn more.](#lurker-timeout)
+* `setPool`: sets pool. Sends `<wPOOLID />` packet.
+  * `poolId`: id of pool from `<w 0 0 1 2 ... />` packet.
+* `sendK2`:
+### lurker-timeout<a name="lurker-timeout" />
 Prevents user from being kicked because of inactivity.
 According to xat protocol, every active user sends `<c t="/KEEPALIVE" />` packet sometimes.
 This mixin forces client to send KEEPALIVE periodically.
 #### options
 * interval - how often client sends KEEPALIVE. Default: 9 minutes. That's enougth.
 ### extended-events
+Makes client emitting more high-level events compared to core `data` event.
 ### echo-behavior
+Makes client responding to locate requests.
+### Options.
+  * `nofollow`: if true, user responds NOFOLLOW to any locate request. Default: false.
+  * `isFriend`: function decides is sender friend or not. Takes client, sender's userno, packet. Returns Boolean. Default: function returns false.
 ### periodic-reconnect
 
   
 [badge-registered]: https://img.shields.io/badge/required--for-registered-blue.svg?style=flat-square
 [badge-vip]: https://img.shields.io/badge/required--for-vip-800080.svg?style=flat-square
 [badge-ignored]: https://img.shields.io/badge/-ignored-964b00.svg?style=flat-square
-
