@@ -33,16 +33,18 @@ user.on('data', function (data) {
 ## Core
 Core implements basic behavior for interaction with xat. 
 Core designed to be flexible and fast-patchable.
-First word means that you can easily customize core (see more below).
-About second word. Sometimes xat may update it's protocol. Futhermore, new version of protocol may be incompatible with previous. Attentive code reader may notice, that there are some reasons what makes easier to patch core. Pray the EcmaScript compatibility/portability!
+
+Flexible: you can easily customize core (see more below).
+
+Fast-patchable: sometimes xat may update it's protocol. Futhermore, new version of protocol may be incompatible with previous. Core can be easily patched, for some reasons. Pray the EcmaScript compatibility/portability!
 
 Details of implemented behavior listed below.
 
 When user connects to chat:
 * First, client have to determine ip and port of a server.
-* It have to send 'y'-packet with basic authentication info: user id, room, main-owner flag.
-* Server sends response to sent 'y'-packet. Response contains some information required to process authentication.
-* User responds to server's 'y'-packet with 'j2'-packet. 'j2' packet contains quite full auth information, such as: nickname, avatar, homepage, k1, k3 (security keys), d4, d5,... (info about powers) and so on.
+* It have to send `<y>` packet with basic authentication info: user id, room, main-owner flag.
+* Server sends response to sent `<y>` packet. Response contains some information required to process authentication.
+* User responds to server's `<y>` packet with `<j2>` packet. `<j2>` packet contains quite full auth information, such as: nickname, avatar, homepage, k1, k3 (security keys), d4, d5,... (info about powers) and so on.
 * Server sends current state of chat: settings, last 20 messages, last active users.
 
 So, core implements first, second and fourth steps.
@@ -153,21 +155,21 @@ Adds several methods for interaction with chat.
 * `sendTextMessage`: sends message to main chat.
   * `message`
   * `options`:
-    * `asLink`: when user sends link via swl client, client adds 'l' attribute to <m>, which prevents message from storing. This options adds 'l' attribute as well. Default: false.
+    * `asLink`: when user sends link via swl client, client adds 'l' attribute to `<m>`, which prevents message from storing. This options adds 'l' attribute as well. Default: `false`.
 * `sendPMMessage`: sends private message to user. 
   * `options`
     * `message`
     * `receiver`
-    * `asLocal`: sends `<p>` message instead of `<z>`. `<p>` message reach it's destination only if sender and receiver are in same chat. Probably, it's easier for server to route `<p>` packet rather than `z`, but in case sender and receiver are in same chat, both packages routes in the same way. Default: false.
+    * `asLocal`: sends `<p>` message instead of `<z>`. `<p>` message reach it's destination only if sender and receiver are in same chat. Probably, it's easier for server to route `<p>` packet rather than `<z>`, but in case sender and receiver are in same chat, both packages routes in the same way. Default: `false`.
 * `sendPCMessage`:
   * `options`: same as for sendPMMessage
 * `sendLocate`: sends locate (/l) request to user.
   * `userno`: destination.
 * `sendResponseToLocate`: sends at (/a) message, that usually responds to locate. 
   * `userno`: destination.
-  * `options`: note! nofollow option is stronger that isFriend. It means, if you set nofollow to true, no matter what is isFriend.
-    * `isFriend`: should response reveal client's location to requester.
-    * `nofollow`: should response state that client has activated (nofollow) power. Works even without power.
+  * `options`: **note: nofollow option is stronger that isFriend. It means, if you set nofollow to true, no matter what is isFriend.**
+    * `isFriend`: should response reveal client's location to requester. Default: `false`.
+    * `nofollow`: should response state that client has activated (nofollow) power. Works even without power. Default: `false`.
 * `sendGetFriendStatus`: sends list of friends whose status (online/offline) we want to know.
   * `friends`: list of friend's ids.
 * `makeUser`:
@@ -194,19 +196,23 @@ Adds several methods for interaction with chat.
 * `setPool`: sets pool. Sends `<wPOOLID />` packet.
   * `poolId`: id of pool from `<w 0 0 1 2 ... />` packet.
 * `sendK2`:
+
 ### lurker-timeout<a name="lurker-timeout" />
 Prevents user from being kicked because of inactivity.
 According to xat protocol, every active user sends `<c t="/KEEPALIVE" />` packet sometimes.
 This mixin forces client to send KEEPALIVE periodically.
 #### options
 * interval - how often client sends KEEPALIVE. Default: 9 minutes. That's enougth.
+
 ### extended-events
 Makes client emitting more high-level events compared to core `data` event.
+
 ### echo-behavior
 Makes client responding to locate requests.
-### Options.
+#### Options.
   * `nofollow`: if true, user responds NOFOLLOW to any locate request. Default: false.
   * `isFriend`: function decides is sender friend or not. Takes client, sender's userno, packet. Returns Boolean. Default: function returns false.
+  
 ### periodic-reconnect
 
   
