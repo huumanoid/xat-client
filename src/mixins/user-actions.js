@@ -40,7 +40,7 @@ function userActionsBind(user) {
     user.sendPCMessage = function sendPCMessage(options) {
         // compatibility
         if (typeof options === 'string') {
-            options = { asLocal: arguments[3], message: arguments[0], receiver: arguments[1] };
+            options = { asLocal: arguments[2], message: arguments[0], receiver: arguments[1] };
         }
 
         options = options || {};
@@ -61,7 +61,7 @@ function userActionsBind(user) {
     user.sendPMMessage = function sendPMMessage(options) {
         // compatibility
         if (typeof options === 'string') {
-            options = { asLocal: arguments[3], message: arguments[0], receiver: arguments[1] };
+            options = { asLocal: arguments[2], message: arguments[0], receiver: arguments[1] };
         }
 
         options = options || {};
