@@ -1,3 +1,4 @@
+'use strict';
 var UserRank = require('../core/const.js').UserRank
 
 function rankToString(rank) {
