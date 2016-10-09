@@ -49,7 +49,7 @@ class XatUser extends emitter {
                 buf = buf.slice(lastZero + 1);
             });
 
-            socket.on('end', () => this._myOnClose());
+            socket.on('close', () => this._myOnClose());
         }).catch(e => {
             this.emit('error', e);
         });
@@ -457,6 +457,7 @@ class XatUser extends emitter {
 
     _myOnClose() {
         this.connected = false;
+        this.socket = null;
         this.emit('close');
     }   
 
