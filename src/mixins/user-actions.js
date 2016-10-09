@@ -37,14 +37,19 @@ function userActionsBind(user) {
         hooks.CountLinks = countlinks;
         return ret;
     }
-    user.sendPCMessage = function sendPCMessage(message, receiver, options) {
+    user.sendPCMessage = function sendPCMessage(options) {
         // compatibility
-        if (typeof options === 'boolean') {
-            options = { asLocal: options };
+        if (typeof options === 'string') {
+            options = { asLocal: arguments[3], message: arguments[0], destination: arguments[1] };
         }
 
         options = options || {};
         const asLocal = options.asLocal || false;
+        const message = options.message;
+        const receiver = options.receiver;
+        if (message === undefined || receiver === undefined) {
+            throw new Error("unspecified message or destination passed");
+        }
 
         const hooks = user._NetworkSendMsgHooks;
         const onuserlist = hooks.OnUserList;
@@ -53,14 +58,19 @@ function userActionsBind(user) {
         hooks.OnUserList = onuserlist;
         return ret;
     }
-    user.sendPMMessage = function sendPMMessage(message, receiver, options) {
+    user.sendPMMessage = function sendPMMessage(options) {
         // compatibility
-        if (typeof options === 'boolean') {
-            options = { asLocal: options };
+        if (typeof options === 'string') {
+            options = { asLocal: arguments[3], message: arguments[0], destination: arguments[1] };
         }
 
         options = options || {};
         const asLocal = options.asLocal || false;
+        const message = options.message;
+        const receiver = options.receiver;
+        if (message === undefined || receiver === undefined) {
+            throw new Error("unspecified message or destination passed");
+        }
 
         const hooks = user._NetworkSendMsgHooks;
         const onuserlist = hooks.OnUserList;
