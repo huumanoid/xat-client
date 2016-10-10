@@ -157,10 +157,10 @@ function classifyMessage(e) {
                                                     duration: duration,
                                                     bannedUntil: bannedUntil,
                                                 };
-                                                return { type: 'gag', args };
+                                                return { type: 'control-gag', args };
                                             };
                                             if ((((e.nodeName === 'c')) && ((FirstTwo === '/u')))){
-                                                return { type: 'ungag', args: {
+                                                return { type: 'control-ungag', args: {
                                                     unbanned: e.attributes.d,
                                                     unbannedBy: e.attributes.u,
                                                 }};
@@ -168,14 +168,14 @@ function classifyMessage(e) {
                                             if ((((e.nodeName === 'c')) || ((e.nodeName === 'p')))){
                                                 if (FirstTwo === '/m'){
                                                     IsMakeUser = true;//make user
-                                                    return { type: 'make-user' };
+                                                    return { type: 'control-make-user' };
                                                 };
                                                 if (FirstTwo === '/r'){
                                                     IsUnMakeUser = true;//unmake user
-                                                    return { type: 'unmake-user' };
+                                                    return { type: 'control-unmake-user' };
                                                 };
                                                 if (FirstTwo === '/k'){
-                                                    return { type: 'kick',
+                                                    return { type: 'control-kick',
                                                         args: {
                                                             reason: e.attributes.p,
                                                             kickedBy: e.attributes.u,
@@ -209,6 +209,55 @@ function classifyMessage(e) {
                                             if (FirstTwo === '/b'){//friend (learn more!)
                                             };
                                             if (FirstTwo === '/t'){//ttth
+                                            };
+                                            if (e.nodeName == "m")
+                                            {
+                                                if ((((FirstTwo == "/k")) && ((e.attributes.t.charAt(2) == "a"))))
+                                                {
+                                                    IsSlash = false;
+                                                    return { type: 'kick-all' };
+                                                } else
+                                                {
+                                                    if ((((((((((((FirstTwo == "/g")) || ((FirstTwo == "/u")))) || ((FirstTwo == "/m")))) || ((FirstTwo == "/r")))) || ((FirstTwo == "/k")))) || ((FirstTwo == "/n"))))
+                                                    {
+                                                        {
+                                                            if (FirstTwo == "/g")
+                                                            {
+                                                                return { type: 'gag' };
+                                                            } else
+                                                            {
+                                                                if (FirstTwo == "/u")
+                                                                {
+                                                                    return { type: 'ungag' };
+                                                                } else
+                                                                {
+                                                                    if (FirstTwo == "/m")
+                                                                    {
+                                                                        return { type: 'make-user' };
+                                                                    } else
+                                                                    {
+                                                                        if (FirstTwo == "/r")
+                                                                        {
+                                                                            return { type: 'unmake-user' };
+                                                                        } else
+                                                                        {
+                                                                            if (FirstTwo == "/k")
+                                                                            {
+                                                                                return { type: 'kick' };
+                                                                            } else
+                                                                            {
+                                                                                if (FirstTwo == "/n")
+                                                                                {
+                                                                                };
+                                                                            };
+                                                                        };
+                                                                    };
+                                                                };
+                                                            };
+                                                            IsSlash = false;
+                                                        };
+                                                    };
+                                                };
                                             };
                                             return { type: 'unknown' }
                                         };
