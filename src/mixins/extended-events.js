@@ -139,7 +139,7 @@ function classifyMessage(e) {
                                                         setterId: e.attributes.d,
                                                         scrollerContent: e.attributes.t.substr(2) } };
                                             };
-                                            if ((((e.nodeName === 'c')) && ((FirstTwo === '/g')))){//first condition seems weird
+                                            if ((((e.nodeName === 'c')) && ((FirstTwo === '/g')))){
                                                 let duration = '0';
                                                 let bannedUntil = '0';
                                                 if (e.nodeName === 'c') {
@@ -168,9 +168,11 @@ function classifyMessage(e) {
                                             if ((((e.nodeName === 'c')) || ((e.nodeName === 'p')))){
                                                 if (FirstTwo === '/m'){
                                                     IsMakeUser = true;//make user
+                                                    return { type: 'make-user' };
                                                 };
                                                 if (FirstTwo === '/r'){
                                                     IsUnMakeUser = true;//unmake user
+                                                    return { type: 'unmake-user' };
                                                 };
                                                 if (FirstTwo === '/k'){
                                                     return { type: 'kick',
