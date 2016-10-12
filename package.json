@@ -1,6 +1,6 @@
 {
   "name": "xat-client",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Node.js implementation of xat.com client.",
   "main": "./index.js",
   "repository": {
@@ -10,5 +10,11 @@
   "license": "MIT",
   "dependencies": {
     "xml2js": "^0.4.16"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.3"
+  },
+  "scripts": {
+    "jshint": "jshint --verbose src/"
   }
 }
