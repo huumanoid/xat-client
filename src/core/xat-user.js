@@ -227,7 +227,7 @@ class XatUser extends emitter {
             if (global.rf){
                 _local5.attributes.e = "1";
             };
-            _local5.attributes.f = ((((global.um)!=undefined) ? 0 : (((todo.w_autologin & 1)) ? 0 : 1) | ((todo.LoginPressed) ? 2 : 0)) | ((global.pass)!=undefined) ? 4 : 0);
+            _local5.attributes.f = ((((global.um)!=undefined) ? 0 : (((todo.w_autologin & 1)) ? 0 : 1) | ((todo.LoginPressed) ? 2 : 0)) | (((global.pass)!=undefined) ? 4 : 0));
             todo.w_autologin = (todo.w_autologin | 1);
             if (((todo.pass) || (!((global.pass == undefined))))){
                 _local5.attributes.r = ((global.pass)!=undefined) ? global.pass : todo.pass;
