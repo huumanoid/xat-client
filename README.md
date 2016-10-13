@@ -225,10 +225,15 @@ Second section contains packet descriptions.
 ## Packets descriptions
 
 ### `<y>`
-`<y r="w_useroom" m="{pass !== undefined ? 1 : 0}" v="attempt" u="w_userno" [s="domain" p="port"] />`
+```xml
+<y r="w_useroom" m="{pass !== undefined ? 1 : 0}" v="attempt" u="w_userno" [s="domain" p="port"] />
+```
 * `v`: number of attempt to connect, optional
+
 ### `<j2>`
-`<j2 Y="code" l5="perlinNoise" l4="jt3" l3="jt2" l2="jt1" q="onXat" y="" k="w_k1" k3="w_k3" p="w_pool" c="w_useroom" f="autologin" u="w_userno" n="w_name" a="w_avatar" h="w_homepage" v="w_userrev" b="GetGagTime" cb="w_cb" [e="1" sn="w_sn" N="w_registered" dt="w_dt" d0="w_d0" d1="w_d1" d2="w_d2" d3="w_d3" dx="w_xats" d0="w_PowerO" d[4-MAX_PWR_INDEX]="w_Powers[i-4]" />`
+```xml
+<j2 Y="code" l5="perlinNoise" l4="jt3" l3="jt2" l2="jt1" q="onXat" y="" k="w_k1" k3="w_k3" p="w_pool" c="w_useroom" f="autologin" u="w_userno" n="w_name" a="w_avatar" h="w_homepage" v="w_userrev" b="GetGagTime" cb="w_cb" [e="1" sn="w_sn" N="w_registered" dt="w_dt" d0="w_d0" d1="w_d1" d2="w_d2" d3="w_d3" dx="w_xats" d0="w_PowerO" d[4-MAX_PWR_INDEX]="w_Powers[i-4]" />
+```
 * `perlinNoise`: [see more](#perlin-noise)
 * `code`:
 * `jt1`: always 0
@@ -245,11 +250,17 @@ Second section contains packet descriptions.
 `c` optional, if specified in `<y r="w_useroom">`
 `f` optional
 `v` optional
+`k`: if not specified, chat sends invalid `<i>`, sends `<u u="0".. />` and `<v e="60" />`
 
 ### `<i>`
-`<i b="{background-url};={related-group-name};={related-group-room};=?;={radio-url};={buttoncolor}" f="FlagBits" cb="?" r="rank" B="bot_userno"/>`
+```xml
+<i b="{background-url};={related-group-name};={related-group-room};=?;={radio-url};={buttoncolor}" f="FlagBits" cb="?" r="rank" B="bot_userno"/>
+```
+
 ### `<gp>`
-`<gp p="group-powers-mask" gN1="settings of power N1" gN2="settings of power N2" />`
+```xml
+<gp p="group-powers-mask" gN1="settings of power N1" gN2="settings of power N2" />
+```
 * g74: (gline) list of smiles separated by commas: `smile1,smile2,..,smile12`
 * g80: (gcontrol) chat gcontrol settings distinct with default ones.
 * g90: (bad) list of bad words separated by commas.
@@ -284,25 +295,48 @@ Second section contains packet descriptions.
 * g252: (redirect)
   * `id`: groupname of location
   * `v`: ?
+
 ### `<u>`
+
 ### `<o>`
+
 ### `<l>`
-`<l u="w_userno" />`
+```xml
+<l u="w_userno" />
+```
+
 ### `<m>`
-`<m [u="{w_userno}_{w_userrev}"] t="message" [l="1"]/>`
+```xml
+<m [u="{w_userno}_{w_userrev}"] t="message" [l="1"]/>
+```
 `<m u="w_userno" d="w_userno" t="/m" p="rank" />`
+
 ### `<p>`
+
 ### `<z>`
+
 ### `<x>`
+
 ### `<done>`
+
 ### `<logout>`
-`<logout e="error-code" />`
+```xml
+<logout e="error-code" />
+```
 * E03: incorrect `<j2 y="value" />`/ userno or room wasn't specified both in `<y>` and `<j2>`
 * E07: `<j2 k="w_k1" />` omitted / `<j2 k="w_k1" u="w_userno" />` incorrect (with `<v e="60" />`)
 * E25: incorrect `<j2 l5="{perlin-noise}" k3="w_k3" />`
 * E36-38: protect activated
+
 ### `<idle>`
+```xml
+<idle e="error-code" />
+```
+* I04: guest user idle. Comes after 1 minune from connection
+* I01: regular user idle.
+
 ### `<q>`
+
 ### `<dup>`
 
 
