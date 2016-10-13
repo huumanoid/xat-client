@@ -61,7 +61,7 @@ Actual scheme implemented in file src/core/ippick.js. You can use your own schem
 Original xat's client preprocesses content of chat.sol and form `<j2>`.
 Format of `<j2>` packet is not strict, but sensitive in some cases (especially when we form `<j2>` packet for registered/subscriber user). [See more.](#xat-user-options)
 
-The most interesing part of this process is that you need to compute 'l5' attribute using pixel's rgb value, get from specially generated image overlapped by perlin noise. Seeds for perlin noise and image settings goes from 'p' attribute of server's `<y>` packet. This is how it's implement in original swf client. However, range of possible parameters, actually used by server, is quite small. So, the solution is to precalculate all required values of 'l5' and store it, for example, in file.
+<a name="perlin-noise"/>The most interesing part of this process is that you need to compute 'l5' attribute using pixel's rgb value, get from specially generated image overlapped by perlin noise. Seeds for perlin noise and image settings goes from 'p' attribute of server's `<y>` packet. This is how it's implement in original swf client. However, range of possible parameters, actually used by server, is quite small. So, the solution is to precalculate all required values of 'l5' and store it, for example, in file.
 *Note: idea of implemented solution not belongs to me. Unfortunately, i don't remember, who gave me files with precalculated l5 values, but, anyway, thank you!*
 
 The process described above is customizable.
@@ -215,7 +215,98 @@ Makes client responding to locate requests.
   
 ### periodic-reconnect
 
-  
+# Protocol
+This section contains knowledge about protocol.
+First subsection contains events, actions and corresponding behavior.
+Second section contains packet descriptions.
+
+## Events, actions and behaviors.
+
+## Packets descriptions
+
+### `<y>`
+`<y r="w_useroom" m="{pass !== undefined ? 1 : 0}" v="attempt" u="w_userno" [s="domain" p="port"] />`
+* `v`: number of attempt to connect, optional
+### `<j2>`
+`<j2 Y="code" l5="perlinNoise" l4="jt3" l3="jt2" l2="jt1" q="onXat" y="" k="w_k1" k3="w_k3" p="w_pool" c="w_useroom" f="autologin" u="w_userno" n="w_name" a="w_avatar" h="w_homepage" v="w_userrev" b="GetGagTime" cb="w_cb" [e="1" sn="w_sn" N="w_registered" dt="w_dt" d0="w_d0" d1="w_d1" d2="w_d2" d3="w_d3" dx="w_xats" d0="w_PowerO" d[4-MAX_PWR_INDEX]="w_Powers[i-4]" />`
+* `perlinNoise`: [see more](#perlin-noise)
+* `code`:
+* `jt1`: always 0
+* `jt2`: time passed between first attempt to connect and receiving `<y>`
+* `jt3`: time passed between receiving `<y>` and sending `<j2>`
+* `GetGagTime`:
+* `autologin`: bitmask. If autologin = 1, will not sign in automatically.
+  * +1: set if user haven't set "Don't sign in automatically".
+  * +2: set if Login button pressed.
+  * +4: set if pass was defined in flashvars.
+* `e`: ?
+
+`u` optional, if specified in `<y>`
+`c` optional, if specified in `<y r="w_useroom">`
+`f` optional
+`v` optional
+
+### `<i>`
+`<i b="{background-url};={related-group-name};={related-group-room};=?;={radio-url};={buttoncolor}" f="FlagBits" cb="?" r="rank" B="bot_userno"/>`
+### `<gp>`
+`<gp p="group-powers-mask" gN1="settings of power N1" gN2="settings of power N2" />`
+* g74: (gline) list of smiles separated by commas: `smile1,smile2,..,smile12`
+* g80: (gcontrol) chat gcontrol settings distinct with default ones.
+* g90: (bad) list of bad words separated by commas.
+* g96: (winter) winter flix.
+* g100: (link) list of keywords followed by [bit.ly](//bit.ly) short links. e.g. "foo,1q2w3e,bar,2w3e4r". Example of bitly link: http://bit.ly/*1bdDlXc*
+* g106: (gscol) code of color, appended to every smile in chat, e.g. "#clear"
+* g112: (announce) welcome string.
+* g114: (rankpool)
+  * `m`: main pool name
+  * `t`: private pool name
+  * `rnk`: private pool required rank. Type: `Rank.No`
+  * `b`: ban pool name (banpool). Type: `String`
+  * `brk`: ban pool required rank of not banned user. Type: `Rank.No`
+  * `v`: ?
+* g180: (gsound) names of corresponding sounds
+  * `m`: sound when someone sends message.
+  * `d`: user sign in sound
+  * `t`: tab sound
+* g188: (doodlerace)
+  * `st`: ?
+  * `o`: ?
+  * `v`: ?
+* game: (g192), (g246), (g256) (g238). All possible fields listed below. Some games don't have some of this fields. Fields with default value are omited.
+  * `rnk`: required rank to start game. Type: `Rank.No`
+  * `dt`: default play time. Type: `Seconds`.
+  * `lv`: default level. Type: `Integer`.
+  * `rt`: default result display time. Type: `Seconds`.
+  * `rc`: game type - race (not sure). Value: 1
+  * `tg`: target score
+  * `pz`: prize (rank).
+  * `v`: ?
+* g252: (redirect)
+  * `id`: groupname of location
+  * `v`: ?
+### `<u>`
+### `<o>`
+### `<l>`
+`<l u="w_userno" />`
+### `<m>`
+`<m [u="{w_userno}_{w_userrev}"] t="message" [l="1"]/>`
+`<m u="w_userno" d="w_userno" t="/m" p="rank" />`
+### `<p>`
+### `<z>`
+### `<x>`
+### `<done>`
+### `<logout>`
+`<logout e="error-code" />`
+* E03: incorrect `<j2 y="value" />`/ userno or room wasn't specified both in `<y>` and `<j2>`
+* E07: `<j2 k="w_k1" />` omitted / `<j2 k="w_k1" u="w_userno" />` incorrect (with `<v e="60" />`)
+* E25: incorrect `<j2 l5="{perlin-noise}" k3="w_k3" />`
+* E36-38: protect activated
+### `<idle>`
+### `<q>`
+### `<dup>`
+
+
+
 [badge-registered]: https://img.shields.io/badge/required--for-registered-blue.svg?style=flat-square
 [badge-vip]: https://img.shields.io/badge/required--for-vip-800080.svg?style=flat-square
 [badge-ignored]: https://img.shields.io/badge/-ignored-964b00.svg?style=flat-square
