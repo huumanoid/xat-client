@@ -50,15 +50,17 @@ module.exports.bind = function chatData(user, opts) {
         
         if (data.i) {
             var b = data.i.attributes.b && data.i.attributes.b.split(';=')
-            user.chatbox.settings = {
-                background: b[0] && b[0].split('#')[0] || undefined,
-                radio: b[4],
-                buttonColor: b[5],
-                flagbits: data.i.attributes.f,
-                memberOnly: Boolean(data.i.attributes.f & (128 | 0x100000)),
-                registeredOnly: Boolean(data.i.attributes.f & 0x100000),
-                vipOnly: Boolean(data.i.attributes.f & 0x100000) 
-                    && Boolean(data.i.attributes.f & 128),
+            if (b instanceof Array) {
+              user.chatbox.settings = {
+                  background: b[0] && b[0].split('#')[0] || undefined,
+                  radio: b[4],
+                  buttonColor: b[5],
+                  flagbits: data.i.attributes.f,
+                  memberOnly: Boolean(data.i.attributes.f & (128 | 0x100000)),
+                  registeredOnly: Boolean(data.i.attributes.f & 0x100000),
+                  vipOnly: Boolean(data.i.attributes.f & 0x100000) 
+                      && Boolean(data.i.attributes.f & 128),
+              }
             }
         }
 
