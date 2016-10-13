@@ -143,10 +143,10 @@ function classifyMessage(e) {
                                                 let duration = '0';
                                                 let bannedUntil = '0';
                                                 if (e.nodeName === 'c') {
-                                                    bannedUntil = intParse(e.attributes.t.substr(2));
+                                                    bannedUntil = parseInt(e.attributes.t.substr(2));
                                                     duration = bannedUntil === 0 ? 0 : (bannedUntil - (new Date().getTime() / 1000 | 0));
                                                 } else {
-                                                    duration = intParse(e.attributes.t.substr(2));
+                                                    duration = parseInt(e.attributes.t.substr(2));
                                                     bannedUntil = (new Date().getTime() / 1000 | 0) + duration;
                                                 }
 

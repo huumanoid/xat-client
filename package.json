@@ -1,11 +1,11 @@
 {
   "name": "xat-client",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Node.js implementation of xat.com client.",
   "main": "./index.js",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/huumanoid/xat-client.git"
+    "url": "https://github.com/huumanoid/xat-client.git",
+    "type": "git"
   },
   "license": "MIT",
   "dependencies": {
@@ -16,5 +16,6 @@
   },
   "scripts": {
     "jshint": "jshint --verbose src/"
-  }
+  },
+  "author": "huumanoid"
 }
