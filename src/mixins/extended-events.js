@@ -263,7 +263,7 @@ function classifyMessage(e) {
                                         };
                                         let args = { 
                                             message: e.attributes.t, 
-                                            sender: e.attributes.u.split('_')[0], 
+                                            sender: (typeof e.attributes.u === 'string' ?  e.attributes.u.split('_')[0] : null), 
                                             timestamp: e.attributes.E,
                                             roomId: e.attributes.r
                                         }
