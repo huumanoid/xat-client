@@ -286,6 +286,8 @@ class XatUser extends emitter {
         let xatlib = this._xatlib;
 
         data = data.toString('utf-8');
+        // fixes issue #1: handle xmls like <tag attr1="val1"attr2="val2" />
+        data = data.replace(/("[^"]*")(.)/, '$1 $2');
         this._parser.parseString(data, (err, result) => {
             if (err) {
                 return this._myOnError(err)
