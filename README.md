@@ -222,6 +222,60 @@ Second section contains packet descriptions.
 
 ## Events, actions and behaviors.
 
+### Sign in.<a name="sign-in"/>
+
+#### Unregistered user.
+
+#### Guest
+
+#### Registered user.
+
+#### Subscriber user.
+
+#### Don't sign me in automatically.<a name="dont-sign-me-in-automatically"/>
+Initiated when client set "f" attribute of `<j2>` to 1.
+Client receives all data like in [sign in case](#sign-in), but receives `<logout e="E12" />` instead of `<done />`.
+Other clients don't receive `<u>`, but receive `<l>`
+
+### Private messages.
+
+### Locate & At.
+Locate procedure used by clients *source* to fetch other client's (*target*) data.
+
+Locate initiated when:
+* Source clicks on target.
+* Target sends PM/PC message and source's user list doesn't contain target.
+
+Source sends locate packet:
+```xml
+<z u="sourceid" d="targetid" t="/l" />
+```
+Target receives this packet and sends at packet.
+```xml
+<z u="targetid" d ="sourceid" t="{response}"/>
+```
+* /a\_: when source is not friend of target.
+* /a: when source is friend of target.
+* /a\_NF: when target activated (nofollow)
+
+Then source receives packet:
+```xml
+<z u="targetid" d ="sourceid" t="/a{location}" n="target_name" a="target_avatar" ... />
+```
+At packet contains target's profile data: `w_name`, `w_avatar`, `w_homepage`, `w_registered`, `w_d0`, `w_Powers`, `w_PowerO`, `q`
+location can have three values:
+* {chat-url}: when sourse is friend of target, location contains url of chat, where target was active the last time.
+* \_: when source is not friend of target.
+* \_NF: when target activated (nofollow).
+
+### Pools
+
+### Ranks
+
+### Ban & Kick
+
+### Idle
+
 ## Packets descriptions
 
 ### `<y>`
@@ -229,28 +283,33 @@ Second section contains packet descriptions.
 <y r="w_useroom" m="{pass !== undefined ? 1 : 0}" v="attempt" u="w_userno" [s="domain" p="port"] />
 ```
 * `v`: number of attempt to connect, optional
+* `s`: seems to be ignored.
+* `p`: seems to be ignored.
 
 ### `<j2>`
 ```xml
 <j2 Y="code" l5="perlinNoise" l4="jt3" l3="jt2" l2="jt1" q="onXat" y="" k="w_k1" k3="w_k3" p="w_pool" c="w_useroom" f="autologin" u="w_userno" n="w_name" a="w_avatar" h="w_homepage" v="w_userrev" b="GetGagTime" cb="w_cb" [e="1" sn="w_sn" N="w_registered" dt="w_dt" d0="w_d0" d1="w_d1" d2="w_d2" d3="w_d3" dx="w_xats" d0="w_PowerO" d[4-MAX_PWR_INDEX]="w_Powers[i-4]" />
 ```
+
+#### Variables
 * `perlinNoise`: [see more](#perlin-noise)
 * `code`:
 * `jt1`: always 0
 * `jt2`: time passed between first attempt to connect and receiving `<y>`
 * `jt3`: time passed between receiving `<y>` and sending `<j2>`
 * `GetGagTime`:
-* `autologin`: bitmask. If autologin = 1, will not sign in automatically.
+* `autologin`: bitmask. If `autologin` = 1, [will not sign in automatically](#dont-sign-me-in-automatically).
   * +1: set if user haven't set "Don't sign in automatically".
   * +2: set if Login button pressed.
   * +4: set if pass was defined in flashvars.
 * `e`: ?
 
-`u` optional, if specified in `<y>`
-`c` optional, if specified in `<y r="w_useroom">`
-`f` optional
-`v` optional
-`k`: if not specified, chat sends invalid `<i>`, sends `<u u="0".. />` and `<v e="60" />`
+#### Attributes
+* `u`: optional, if specified in `<y>`
+* `c`: optional, if specified in `<y r="w_useroom">`
+* `f`: optional
+* `v`: optional
+* `k`: if not specified, chat sends invalid `<i>`, sends `<u u="0".. />` and `<v e="60" />`
 
 ### `<i>`
 ```xml
@@ -309,7 +368,9 @@ Second section contains packet descriptions.
 ```xml
 <m [u="{w_userno}_{w_userrev}"] t="message" [l="1"]/>
 ```
-`<m u="w_userno" d="w_userno" t="/m" p="rank" />`
+```xml
+<m u="w_userno" d="w_userno" t="/m" p="rank" />
+```
 
 ### `<p>`
 
@@ -325,6 +386,7 @@ Second section contains packet descriptions.
 ```
 * E03: incorrect `<j2 y="value" />`/ userno or room wasn't specified both in `<y>` and `<j2>`
 * E07: `<j2 k="w_k1" />` omitted / `<j2 k="w_k1" u="w_userno" />` incorrect (with `<v e="60" />`)
+* E12: [don't sign me in automatically](#dont-sign-me-in-automatically)
 * E25: incorrect `<j2 l5="{perlin-noise}" k3="w_k3" />`
 * E36-38: protect activated
 
