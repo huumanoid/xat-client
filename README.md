@@ -1,7 +1,7 @@
 # xat-client
 
 # Summary
-Node.js implementation of xat client. It's not an application, it's a library. xat-client can be user to build bot or chat client.
+Node.js implementation of xat client. It's not an application, it's a library. xat-client can be used to build bot or chat client.
 
 # Simple example:
 ```js
