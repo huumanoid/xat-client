@@ -3,12 +3,13 @@
 # Summary
 Node.js implementation of xat client. It's not an application, it's a library. xat-client can be used to build bot or chat client.
 
-# Simple example:
+# Examples
+## Low-level (core API) <a name="ex-low-level" />
 ```js
 var XatUser = require('xat-client').XatUser;
 
 var user = new XatUser({
-  todo: { 
+  todo: {
     w_userno: 123456,
     w_k1: "deadbeef777",
     w_name: "nickname",
@@ -25,6 +26,49 @@ user.on('data', function (data) {
 }).on('send', function (data) {
   console.log(data.xml);
 });
+```
+
+## From .sol
+```js
+var fromSol = require('xat-client').fromSol
+
+fromSol('./docs/sol/unregistered-new', (user) => {
+  user.connect()
+})
+```
+
+## Usage of user-actions mixin
+Compare it to [low-level example](#ex-low-level)
+It's preferable to use user-actions instead of core-api send method in most cases.
+```js
+var XatUser = require('xat-client').XatUser
+
+var user = new XatUser({
+  todo: {
+    w_userno: 123456,
+    w_k1: "deadbeef777",
+    w_name: "nickname",
+    w_avatar: "42",
+    w_useroom: 123
+  }
+})
+
+user.addExtension('user-actions')
+
+user.on('data', function (data) {
+  console.log(data);
+  if (data.done !== undefined) {
+    user.sendTextMessage('hello!')
+  }
+}).on('send', function (data) {
+  console.log(data.xml)
+})
+```
+
+## Custom mixin
+```js
+user.addExtension('/path/to/ext.js') // .js is significant
+require('/path/to/another/ext').bind(user)
 ```
 
 # Design
