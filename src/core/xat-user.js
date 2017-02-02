@@ -13,6 +13,13 @@ class XatUser extends emitter {
         super();
         this.todo = options.todo || {};
         this.todo.MAX_PWR_INDEX = this.todo.MAX_PWR_INDEX || xatconst.MAX_PWR_INDEX;
+
+        // Compatibility with .sol
+        this.todo.w_k1 = this.todo.w_k1 || this.todo.w_k1c;
+        this.todo.w_autologin = this.todo.w_autologin != null
+            ? this.todo.w_autologin
+            : 1;
+
         this.global = options.global || {};
         this.gotDone = false;
         this._ipPicker = options.ippicker || defaults.ippicker;

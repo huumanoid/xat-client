@@ -1,7 +1,10 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
+
 const XatUser = require('./src/core/xat-user.js').XatUser;
+const solReader = require('./src/utils/sol-reader.js');
 
 class ExtendableUser extends XatUser {
     constructor(options) {
@@ -21,5 +24,25 @@ class ExtendableUser extends XatUser {
     }
 }
 
-module.exports.XatUser = ExtendableUser;
+const fromSol = (fileName, options) => new Promise((resolve, reject) => {
+    fs.readFile(fileName, (err, res) => {
+        options = options || {};
+        if (err) {
+            return reject(err);
+        }
 
+        const sol = solReader.read(res);
+        options = Object.assign({}, options, {
+            todo: Object.assign({},
+                options.todo,
+                sol)
+        });
+
+        resolve(new ExtendableUser(options));
+    });
+});
+
+module.exports = {
+    XatUser: ExtendableUser,
+    fromSol
+};

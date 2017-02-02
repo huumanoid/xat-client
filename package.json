@@ -1,6 +1,6 @@
 {
   "name": "xat-client",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Node.js implementation of xat.com client.",
   "main": "./index.js",
   "repository": {
@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "amflib": "^1.0.1",
     "xml2js": "^0.4.16"
   },
   "devDependencies": {
