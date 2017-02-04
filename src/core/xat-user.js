@@ -62,59 +62,64 @@ class XatUser extends emitter {
         });
     }
 
-    send(packet) {
-        return new Promise((resolve, reject) => {
-            
-            if (typeof packet === 'string') {
-                this._parser.parseString(packet, (err, res) => {
-                    try {
-                        if (err) {
-                            res = null;
+    send(packet, options) {
+        options = options || {}
+        const strict = options.strict != null ? options.strict : false
+        const parse = options.parse != null ? options.parse : true
+
+        const validate = () => new Promise((resolve, reject) => {
+            const isStr = typeof packet === 'string'
+            const isBuf = packet instanceof Buffer
+
+            if (isStr || isBuf) {
+                let raw, str
+                if (isStr) {
+                    str = packet
+                    raw = new Buffer(str + '\0', 'utf8')
+                } else {
+                    if (true) {
+                        raw = packet
+                        str = raw.toString('utf8')
+                    }
+                }
+
+                if (!parse) {
+                    return resolve({ str, raw, xml: null })
+                }
+
+                this._parser.parseString(packet, (err, xml) => {
+                    if (err) {
+                        xml = null
+                        if (strict) {
+                            return reject(err)
                         }
-                        let raw = new Buffer(packet + '\0', 'utf8');
-
-                        this.emit('before-send', { xml: res, str: packet, raw: raw });
-
-                        this._socket.write(raw, null, () => {
-                            this.emit('send', { xml: res, str: packet, raw: raw });
-                            resolve();
-                        });
-                    } catch (e) {
-                        reject(e);
-                    }
-                });
-            } else if (packet instanceof Buffer) {
-                let str = packet.toString('utf8');
-                this._parser.parseString(str, (err, res) => {
-
-                    if (err) {
-                        res = null;
                     }
 
-                    this.emit('before-send', { xml: res, str: str, raw: packet });
-                    this._socket.write(packet, null, () => {
-                        this.emit('send', { xml: res, str: str, raw: packet });
-                        resolve();
-                    });
-                });
+                    resolve({ str, xml, raw })
+                })
             } else {
-                return this.emit('error', new Error('NotImplemented: xml send'));
-                this._builder.create(packet, {}, {}, { headless: true }).then((err, res) => {
-
-                    if (err) {
-                        this.emit('error', err);
-                    }
-
-                    let raw = new Buffer(res + '\0', 'utf8');
-                    this.emit('send', { xml: packet, str: res, raw: raw });
-
-                    this._socket.write(raw, null, resolve);
-                }).catch(reject);
+                reject(new Error('The only acceptable types are Buffer '
+                    + 'and string'))
             }
-        }).catch('error', (err) => {
-            this.emit('error', err);
-            throw err;
-        });
+        })
+
+        const send = (representations) => new Promise((resolve, reject) => {
+            const eventArgs = Object.assign({},
+                representations,
+                { prevent: false })
+            this.emit('before-send', eventArgs)
+            if (!eventArgs.prevent) {
+                this._socket.write(representations.raw, null, (err) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    this.emit('send', representations)
+                    resolve()
+                })
+            }
+        })
+
+        return validate().then(send)
     }
 
     end() {
