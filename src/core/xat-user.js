@@ -40,7 +40,7 @@ class XatUser extends emitter {
             let socket = this._socket = this._createSocket(res, () => 
                                                            this._myOnConnect());
 
-            let buf = new Buffer(0);
+            let buf = Buffer.alloc(0);
 
             socket.on('error', err => this._myOnError(err));
 
@@ -75,7 +75,7 @@ class XatUser extends emitter {
                 let raw, str
                 if (isStr) {
                     str = packet
-                    raw = new Buffer(str + '\0', 'utf8')
+                    raw = Buffer.from(str + '\0', 'utf8')
                 } else {
                     if (true) {
                         raw = packet
