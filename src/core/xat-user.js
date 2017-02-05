@@ -6,6 +6,9 @@ const xml2js = require('xml2js')
 const defaults = require('./defaults.js')
 const xatconst = require('./const.js')
 
+const parserOptions = { attrkey: 'attributes', headless: true }
+const builderOptions = parserOptions
+
 class XatUser extends emitter {
 
   constructor(options) {
@@ -31,7 +34,7 @@ class XatUser extends emitter {
     this._connect = { attempt: 0 }
     this._xatlib = options.xatlib || defaults.xatlib
     this._perlinNoise = options.perlinNoise || defaults.perlinNoise
-    this._parser = new xml2js.Parser({ attrkey: 'attributes' })
+    this._parser = new xml2js.Parser(parserOptions)
     this._NetworkSendMsgHooks = {}
   }
 
@@ -70,12 +73,15 @@ class XatUser extends emitter {
     const validate = () => new Promise((resolve, reject) => {
       const isStr = typeof packet === 'string'
       const isBuf = packet instanceof Buffer
+      const isXML = typeof packet === 'object'
+
+      const strToRaw = str => Buffer.from(str + '\0', 'utf8')
 
       if (isStr || isBuf) {
         let raw, str
         if (isStr) {
           str = packet
-          raw = Buffer.from(str + '\0', 'utf8')
+          raw = strToRaw(str)
         } else {
           raw = packet
           str = raw.toString('utf8')
@@ -95,8 +101,18 @@ class XatUser extends emitter {
 
           resolve({ str, xml, raw })
         })
+      } else if (isXML) {
+        const xml = packet
+
+        let raw, str
+
+        const builder = new xml2js.Builder(builderOptions)
+        str = builder.buildObject(packet)
+        raw = strToRaw(str)
+
+        resolve({ xml, str, raw })
       } else {
-        reject(new Error('The only acceptable types are Buffer '
+        reject(new Error('The only acceptable types are Buffer, object '
           + 'and string'))
       }
     })
