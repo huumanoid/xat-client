@@ -1,13 +1,6 @@
-'use strict';
+'use strict'
 
-module.exports.CleanText = CleanText;
-module.exports.searchreplace = searchreplace;
-module.exports.xInt = xInt;
-module.exports.XMLOrder = XMLOrder;
-module.exports.WordIsLink = WordIsLink;
-module.exports.CleanTextNoXat = CleanText;
-module.exports.xatlinks = xatlinks;
-
+/* eslint-disable */
 function CleanText(_arg1, _arg2){
             var _local4;
             var _local5;
@@ -216,6 +209,14 @@ function WordIsLink(_arg1) {
             };
             return (undefined);
         }
-        
+/* eslint-enable */
 
-        
+module.exports = {
+  CleanText,
+  searchreplace,
+  xInt,
+  XMLOrder,
+  WordIsLink,
+  CleanTextNoXat: CleanText,
+  xatlinks,
+}

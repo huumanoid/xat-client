@@ -6,31 +6,31 @@ Node.js implementation of xat client. It's not an application, it's a library. x
 # Examples
 ## Low-level (core API) <a name="ex-low-level" />
 ```js
-var XatUser = require('xat-client').XatUser;
+const XatUser = require('xat-client').XatUser
 
-var user = new XatUser({
+const user = new XatUser({
   todo: {
     w_userno: 123456,
-    w_k1: "deadbeef777",
-    w_name: "nickname",
-    w_avatar: "42",
-    w_useroom: 123
-  }
-});
+    w_k1: 'deadbeef777',
+    w_name: 'nickname',
+    w_avatar: '42',
+    w_useroom: 123,
+  },
+})
 
-user.on('data', function (data) {
-  console.log(data);
+user.on('data', (data) => {
+  console.log(data)
   if (data.done !== undefined) {
     user.send('<m t="hello!" u="123456" />')
   }
-}).on('send', function (data) {
-  console.log(data.xml);
-});
+}).on('send', (data) => {
+  console.log(data.xml)
+})
 ```
 
 ## From .sol
 ```js
-var fromSol = require('xat-client').fromSol
+const fromSol = require('xat-client').fromSol
 
 fromSol('./docs/sol/unregistered-new', (user) => {
   user.connect()
@@ -38,29 +38,30 @@ fromSol('./docs/sol/unregistered-new', (user) => {
 ```
 
 ## Usage of user-actions mixin
-Compare it to [low-level example](#ex-low-level)
+Compare it to [low-level example](#ex-low-level).
+
 It's preferable to use user-actions instead of core-api send method in most cases.
 ```js
-var XatUser = require('xat-client').XatUser
+const XatUser = require('xat-client').XatUser
 
-var user = new XatUser({
+const user = new XatUser({
   todo: {
     w_userno: 123456,
-    w_k1: "deadbeef777",
-    w_name: "nickname",
-    w_avatar: "42",
-    w_useroom: 123
-  }
+    w_k1: 'deadbeef777',
+    w_name: 'nickname',
+    w_avatar: '42',
+    w_useroom: 123,
+  },
 })
 
 user.addExtension('user-actions')
 
-user.on('data', function (data) {
-  console.log(data);
+user.on('data', (data) => {
+  console.log(data)
   if (data.done !== undefined) {
     user.sendTextMessage('hello!')
   }
-}).on('send', function (data) {
+}).on('send', (data) => {
   console.log(data.xml)
 })
 ```
@@ -181,16 +182,16 @@ Every mixin should be representet as node.js module and exports method `bind(cli
 Example of mixin:
 ```javascript
 module.exports.bind = (client) => {
-    client.on('data', (data) => {
-        if (data.m && data.m.attributes.t === 'bang bang!') {
-            console.error("I'm calling the police!");
-        }
-    });
+  client.on('data', (data) => {
+    if (data.m && data.m.attributes.t === 'bang bang!') {
+      console.error("I'm calling the police!")
+    }
+  })
 }
 ```
 To apply mixin to client instance, pass client to bind method of mixin's package.
 ```javascript
-require('/path/to/my/custom/mixin.js').bind(client);
+require('/path/to/my/custom/mixin.js').bind(client)
 ```
 
 ### user-actions

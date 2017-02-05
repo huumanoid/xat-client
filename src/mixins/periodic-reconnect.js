@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * @param options
@@ -6,19 +6,21 @@
  *  only_connected - perform reconnect only if user is connected. Default is false.
  *
  */
-function periodic_reconnect(user, options) {
-    options = options || {};
-    let interval = options.interval || 1000 * 60 * 60 * 2; //2 hours
-    let only_connected = options.only_connected || false;
+module.exports.bind = (user, options) => {
+  options = options || {}
+  const interval = options.interval || 1000 * 60 * 60 * 2 // 2 hours
 
-    setInterval(function () {
-        if (!only_connected || user.isConnected) {
-            user.end();
-            user.once('close', function () {
-                user.connect();
-            });
-        }
-    }, interval);
+  let onlyConnected = options.onlyConnected || false
+
+  // backward compatibility
+  if (options.only_connected != null) {
+    onlyConnected = options.only_connected
+  }
+
+  setInterval(() => {
+    if (!onlyConnected || user.isConnected) {
+      user.end()
+      user.once('close', () => user.connect())
+    }
+  }, interval)
 }
-
-module.exports.bind = periodic_reconnect;

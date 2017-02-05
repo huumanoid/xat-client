@@ -1,19 +1,18 @@
-function nooneIsFriend(user, id, data) {
-    return false;
+const nooneIsFriend = () => false
+
+const everyoneIsFriend = (user, sender, data) => true
+
+const bind = (user, opts) => {
+  opts = opts || {}
+  const { nofollow = false, isFriend = nooneIsFriend } = opts
+  user.on('data', (data) => {
+    const node = data.z || data.p
+    if (node && node.attributes.t.substr(0, 2) === '/l') {
+      const sender = node.attributes.u.split('_')[0]
+
+      user.sendResponseToLocate(sender, isFriend(user, sender, data), nofollow)
+    }
+  })
 }
 
-function everyoneIsFriend(user, id, data) {
-    return true;
-}
-
-module.exports.bind = function echo(user, opts) {
-    opts = opts || {}
-    opts.nofollow = opts.nofollow || false
-    opts.isFriend = opts.isFriend || nooneIsFriend
-    user.on('data', function (data) {
-        var node = data.z || data.p
-        if (node && node.attributes.t.substr(0, 2) == '/l') {
-            user.sendResponseToLocate(node.attributes.u.split('_')[0], opts.isFriend(user, node.attributes.u.split('_')[0], data), opts.nofollow);
-        }
-    })
-}
+module.exports = { bind, nooneIsFriend, everyoneIsFriend }
