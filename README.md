@@ -142,7 +142,7 @@ The process described above is customizable.
   * `w_d0`: bitmask with some settings. You can't affect on this settings by changing d0 manually. ![required for registered][badge-registered]
     * +1: adds shadow to avatar. Shadow appears once user has edited it's xat.me page.
     * +2^21: user is celebrity (cyan pawn).
-    * +2^24: unknown.
+    * +2^24: user has gifts.
   * `w_d1`: when your days are gone (UNIX timestamp) ![required for vip][badge-vip]
   * `w_d2`: BFF/bride id. ![required for registered][badge-registered]
   * `w_d3`: unknown
