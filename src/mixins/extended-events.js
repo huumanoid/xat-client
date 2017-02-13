@@ -22,6 +22,11 @@ function extendedEvents(user, options) {
       const type = prefix + types[i].type
       user.emit(type, { type: type, xml: data, args: types[i].args })
     }
+    user.emit('ee-event', {
+      xml: data,
+      types: types.map(x => x.type),
+      args: types.map(x => x.args),
+    })
   })
 }
 
@@ -291,6 +296,7 @@ function classifyMessage(e) {
                                                         background: e.attributes.b,
                                                         botId: e.attributes.B,
                                                         flags: e.attributes.f,
+                                                        rank: e.attributes.r,
                                                     }};
                                                 } else {
                                                     if (e.nodeName === 'w'){
