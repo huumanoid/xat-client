@@ -19,8 +19,7 @@ class XatUser extends emitter {
     this.todo = options.todo || {}
     this.todo.MAX_PWR_INDEX = this.todo.MAX_PWR_INDEX || xatconst.MAX_PWR_INDEX
 
-    // Compatibility with .sol
-    this.todo.w_k1 = this.todo.w_k1 || this.todo.w_k1c
+    // It's convenient
     this.todo.w_autologin = this.todo.w_autologin != null
       ? this.todo.w_autologin
       : 1

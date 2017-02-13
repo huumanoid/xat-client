@@ -32,6 +32,18 @@ const fromSol = (fileName, options) => new Promise((resolve, reject) => {
         }
 
         const sol = solReader.read(res);
+        for (const key in sol) {
+          let value = sol[key]
+          if (typeof(value) === 'number') {
+            sol[key] = value.toString()
+          }
+        }
+
+        sol.w_k1 = sol.w_k1c
+        delete sol.w_k1c
+
+        sol.w_autologin = sol.w_autologin != null ? sol.w_autlogin : 1
+
         options = Object.assign({}, options, {
             todo: Object.assign({},
                 options.todo,
