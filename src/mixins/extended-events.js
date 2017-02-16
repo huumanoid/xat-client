@@ -103,6 +103,18 @@ function classifyMessage(e) {
                                     if (!e.attributes.t){
                                         e.attributes.t = '';
                                     };
+                                    if (e.attributes.t.startsWith('Limit')
+                                      && e.attributes.u === '0'
+                                      && e.attributes.s === '0') {
+                                      let duration = e.attributes.t.split(' ')[1]
+                                      if (duration) {
+                                        duration = duration.replace('s').trim()
+                                        duration = parseInt(duration)
+                                        return { type: 'limit', args: {
+                                          duration,
+                                        }}
+                                      }
+                                    }
                                     FirstTwo = e.attributes.t.substr(0, 2);
                                     IsSlash = (FirstTwo.substr(0, 1) === '/');
                                     if (!IsSlash && (((e.nodeName === 'p')) || ((e.nodeName === 'z')))){
@@ -354,4 +366,7 @@ function classifyMessage(e) {
   return { type: 'unknown' }
 }
 
-module.exports.bind = extendedEvents
+module.exports = {
+  bind: extendedEvents,
+  classifyMessage,
+}
