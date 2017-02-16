@@ -3,8 +3,8 @@
 const path = require('path');
 const fs = require('fs');
 
-const XatUser = require('./src/core/xat-user.js').XatUser;
-const solReader = require('./src/utils/sol-reader.js');
+const XatUser = require('./core/xat-user.js').XatUser;
+const solReader = require('./utils/sol-reader.js');
 
 class ExtendableUser extends XatUser {
     constructor(options) {
@@ -19,7 +19,7 @@ class ExtendableUser extends XatUser {
         for (let key in arguments) {
             options[key] = arguments[key];
         }
-        require('./' + path.join('src/mixins/', name)).bind.apply(null, [this].concat(options.slice(1)));
+        require('./' + path.join('/mixins/', name)).bind.apply(null, [this].concat(options.slice(1)));
         return this;
     }
 }
