@@ -358,8 +358,11 @@ location can have three values:
 
 ### `<i>`
 ```xml
-<i b="{background-url};={related-group-name};={related-group-room};=?;={radio-url};={buttoncolor}" f="FlagBits" cb="?" r="rank" B="bot_userno"/>
+<i b="{background-url};={related-group-name};={related-group-room};={language};={radio-url};={buttoncolor}" f="{FlagBits}" cb="{?}" [r="{rank}" B="{bot_userno}"] />
 ```
+#### Attributes
+* `B`: id of bot, assigned to this group. Optional.
+* `r`: rank. Optional.
 
 ### `<gp>`
 ```xml
